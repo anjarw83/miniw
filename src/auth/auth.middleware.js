@@ -14,13 +14,30 @@ const verifyToken = (req, res, next) => {
         const decoded = jwt.verify(value, config.TOKEN_KEY);
         req.user = decoded;
     } catch (err) {
-        return res.status(401).send("Invalid Token");
+        return res.status(401).json("Invalid Token");
     }
     return next();
 }
 
+const decodeToken = (req, res) => {
+    const token = req.headers["authorization"];
+    let decodedToken ;
+
+    if (!token) {
+        return res.status(403).json({status: "error", message: "Token is required for authentication"});
+    }
+    try {
+        const value = token.split(" ")[1];
+        decodedToken = jwt.decode(value, config.TOKEN_KEY);
+    } catch (err) {
+        return res.status(401).json({status: "error", message: "Invalid Token"});
+    }
+    return decodedToken;
+}
+
 module.exports = {
-    verifyToken
+    verifyToken,
+    decodeToken
     // // if user is authenticated the redirected to next page else redirect to login page
     // ensureAuth: function(req, res, next) {
     //     if (req.isAuthenticated()) {

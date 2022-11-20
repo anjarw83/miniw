@@ -6,6 +6,7 @@ const jsonParser = bodyParser.json();
 const urlEncoded = bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 });
+
 const walletRepository = require("../wallet/wallet.repository");
 const Wallet = require("../wallet/wallet.model");
 const authService = require("../auth/auth.service");
@@ -34,10 +35,34 @@ router.post("/init", urlEncoded, auth.verifyToken, async(req, res) =>{
     res.status(201).json({status: "success", message: "Wallet Successfully Initialized"});
 });
 
-router.get("/balance", jsonParser, auth.verifyToken, async (req, res) => {
-    const result = { status: "success", body: {}}
+router.post("/enable", auth.verifyToken, async(req, res) =>{
+    const { xid } = auth.decodeToken(req);
 
-    res.status(200).json({ data: result });
+    const wallet = await Wallet.findOneAndUpdate({customerId: xid},
+        {enabled: true}, {returnOriginal: false});
+    res.status(200).json({status: "success", data: {customerId: wallet.customerId, enabled: wallet.enabled} });
+});
+
+router.patch("/disable", auth.verifyToken, async(req, res) =>{
+    const { xid } = auth.decodeToken(req);
+
+    const wallet = await Wallet.findOneAndUpdate({customerId: xid},
+        {enabled: false}, {returnOriginal: false});
+    res.status(200).json({status: "success", data: {customerId: wallet.customerId, enabled: wallet.enabled} });
+});
+
+router.get("/balance", auth.verifyToken, async (req, res) => {
+    const { xid } = auth.decodeToken(req);
+
+    const wallet = await Wallet.findOne({
+        customerId: xid, enabled: true
+    })
+    if( !wallet) {
+        return res.status(404).json({status: "error", message: "Invalid Wallet Balance"});
+    }
+    const result = { status: "success", body: { customerId: xid, balance: wallet.balance }};
+
+    res.status(200).json(result);
 });
 
 module.exports = router

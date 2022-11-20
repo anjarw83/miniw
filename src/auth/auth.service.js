@@ -68,26 +68,25 @@ const register = async (req, res, next) => {
     return { xid: customer._id, token: customer.token };
 }
 
-const verifyToken = (req, res, next) => {
-    const token =
-        req.body.token || req.query.token || req.headers["x-access-token"];
-
-    if (!token) {
-        return res.status(403).send("A token is required for authentication");
-    }
-    try {
-        const decoded = jwt.verify(token, config.TOKEN_KEY);
-        req.user = decoded;
-    } catch (err) {
-        return res.status(401).send("Invalid Token");
-    }
-    return next();
-};
+// const verifyToken = (req, res, next) => {
+//     const token =
+//         req.body.token || req.query.token || req.headers["x-access-token"];
+//
+//     if (!token) {
+//         return res.status(403).send("A token is required for authentication");
+//     }
+//     try {
+//         const decoded = jwt.verify(token, config.TOKEN_KEY);
+//         req.user = decoded;
+//     } catch (err) {
+//         return res.status(401).send("Invalid Token");
+//     }
+//     return next();
+// };
 
 authService = {
     register,
-    signin,
-    verifyToken
+    signin
 }
 
 module.exports = authService
