@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const modelName = 'Customer';
+const modelName = 'customer';
 
 const CustomerSchema = new mongoose.Schema({
     displayName: {
@@ -7,8 +7,7 @@ const CustomerSchema = new mongoose.Schema({
         required: true
     },
     xid: {
-      type: String,
-      required: true
+      type: String
     },
     firstName: {
         type: String,
