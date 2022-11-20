@@ -1,10 +1,24 @@
 const jwt = require("jsonwebtoken");
-const Customer = require("../customer/customer.model");
 const bcrypt = require("bcryptjs")
+const Customer = require("../customer/customer.model");
 const config = process.env;
 
-const sign = (email, password) =>{
 
+const signin = async (req, res, _) =>{
+    const encryptedPassword = await bcrypt.hash(req.body.password, 10);
+    let customer = await Customer.findOne({email: req.body.email, password: encryptedPassword});
+    if(!customer){
+        return res.status(401).json({status: "error", message: "Login Failed"});
+    }
+    // Create token
+    customer.token = jwt.sign(
+        {xid: customer._id, email: customer.email},
+        process.env.TOKEN_KEY,
+        {
+            expiresIn: "1h",
+        }
+    );
+    return { xid: customer._id, token: customer.token };
 }
 
 const register = async (req, res, next) => {
@@ -16,7 +30,6 @@ const register = async (req, res, next) => {
     }
 
     // check if user already exist
-    // Validate if user exist in our database
     const oldUser = await Customer.findOne({email: email});
     console.log(email, oldUser);
 
@@ -28,9 +41,9 @@ const register = async (req, res, next) => {
     const encryptedPassword = await bcrypt.hash(password, 10);
 
     // Create user in our database
-    let user;
+    let customer;
     try {
-        user = await Customer.create({
+        customer = await Customer.create({
             firstName,
             lastName,
             displayName,
@@ -39,21 +52,20 @@ const register = async (req, res, next) => {
         });
 
         // Create token
-        const token = jwt.sign(
-            {user_id: user._id, email},
+        // save user token
+        customer.token = jwt.sign(
+            {xid: customer._id, email},
             process.env.TOKEN_KEY,
             {
-                expiresIn: "2h",
+                expiresIn: "1h",
             }
         );
-        // save user token
-        user.token = token;
     } catch (e) {
         return {status: "error", message: e.message};
     }
 
 
-    return user;
+    return { xid: customer._id, token: customer.token };
 }
 
 const verifyToken = (req, res, next) => {
@@ -74,7 +86,7 @@ const verifyToken = (req, res, next) => {
 
 authService = {
     register,
-    sign,
+    signin,
     verifyToken
 }
 

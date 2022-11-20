@@ -1,5 +1,7 @@
-const express = require('express')
-const mongoose = require("mongoose")
+const express = require('express');
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+
 const app = express()
 const dotenv = require('dotenv');
 dotenv.config();
@@ -14,6 +16,8 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 app.use(routes);
+app.use(bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded());  // to support Url Encoded Bodies
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

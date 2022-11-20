@@ -2,31 +2,22 @@ const mongoose = require("mongoose");
 const modelName = 'wallet';
 
 const WalletSchema = new mongoose.Schema({
-    googleId: {
+    customerId: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
-    displayName: {
+    balance: {
+        type: Number,
+        default: 0.0
+    },
+    referenceId: {
         type: String,
-        required: true
+        unique: true
     },
-    firstName: {
-        type: String,
-        required: true
-    },
-    lastName: {
-        type: String,
-        required: true
-    },
-    image: {
-        type: String
-    },
-    token: {
-        type: String
-    },
-    email: {
-        type: String,
-        required: true
+    enabled: {
+        type: Boolean,
+        default: false
     },
     createdAt: {
         type: Date,
