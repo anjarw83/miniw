@@ -11,10 +11,6 @@ const WalletSchema = new mongoose.Schema({
         type: Number,
         default: 0.0
     },
-    referenceId: {
-        type: String,
-        unique: true
-    },
     enabled: {
         type: Boolean,
         default: false
