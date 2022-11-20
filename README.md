@@ -26,7 +26,14 @@ npm run migration:status
 
 
 ## Run Application
-Adjust Port and db connection in `nodemon.js`
+Copy `sample.env` to `.env`
+
+```
+cp sample.env .env
+```
+
+Adjust Port and db connection `.env` files
+
 Default apps port is `9000` & db port at `27017`
 
 Run apps using
