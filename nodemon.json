@@ -1,0 +1,6 @@
+{
+  "env": {
+    "PORT": 9000,
+    "MONGO_URI": "mongodb://wallet:wallet%21@localhost:27017/authSource=wallet&authMechanism=SCRAM-SHA-256"
+  }
+}
