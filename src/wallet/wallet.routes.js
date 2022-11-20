@@ -65,4 +65,47 @@ router.get("/balance", auth.verifyToken, async (req, res) => {
     res.status(200).json(result);
 });
 
+router.post("/deposits", urlEncoded, auth.verifyToken, async(req,res) =>{
+    const { xid } = auth.decodeToken(req);
+    const amount = req.body.amount;
+
+    if( amount < 0 ){
+        return res.status(400).json({status: "error", message: "Amount must larger than zero"})
+    }
+    const wallet = await Wallet.findOne({
+        customerId: xid, enabled: true
+    })
+    if( !wallet) {
+        return res.status(404).json({status: "error", message: "Invalid Wallet Balance"});
+    }
+    const result = await Wallet.findOneAndUpdate({customerId: xid}, {
+        $inc: { balance: amount }
+    }, {returnOriginal: false});
+
+    res.status(200).json({status: "success", body: { customerId: result.customerId, balance: result.balance}});
+})
+
+router.post("/withdrawals", urlEncoded, auth.verifyToken, async(req,res) =>{
+    const { xid } = auth.decodeToken(req);
+    const amount = req.body.amount;
+
+    if( amount < 0 ){
+        return res.status(400).json({status: "error", message: "Amount must larger than zero"})
+    }
+    const wallet = await Wallet.findOne({
+        customerId: xid, enabled: true
+    })
+    if( !wallet) {
+        return res.status(404).json({status: "error", message: "Invalid Wallet Balance"});
+    }
+    if ( wallet.balance < amount ){
+        return res.status(400).json({status: "error", message: "Insufficient Funds"});
+    }
+    const result = await Wallet.findOneAndUpdate({customerId: xid}, {
+        $inc: { balance: -amount }
+    }, { returnOriginal: false});
+
+    res.status(200).json({status: "success", body: { customerId: result.customerId, balance: result.balance}});
+})
+
 module.exports = router
