@@ -5,7 +5,6 @@ const WalletSchema = new mongoose.Schema({
     customerId: {
         type: String,
         required: true,
-        unique: true
     },
     balance: {
         type: Number,

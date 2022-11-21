@@ -1,8 +1,8 @@
 const Wallet = require("./wallet.model");
 
-const create = async customerId => {
+const create = async (customerId) => {
     try {
-         await Wallet.create(customerId);
+         await Wallet.create({customerId: customerId});
     } catch (e){
         console.log(`Error : ${e.message}`);
     }

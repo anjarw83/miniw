@@ -11,7 +11,7 @@ const walletService = require("../wallet/wallet.service");
 const Wallet = require("../wallet/wallet.model");
 const authService = require("../auth/auth.service");
 
-router.post("/wallet/init", urlEncoded, auth.verifyToken, async(req, res) =>{
+router.post("/init", urlEncoded, auth.verifyToken, async(req, res) =>{
     const customerId = req.body.customer_xid;
     if(!customerId){
         return res.status(400).json({status: "error", message: "field xid required"});
@@ -22,7 +22,7 @@ router.post("/wallet/init", urlEncoded, auth.verifyToken, async(req, res) =>{
         return res.status(409).json({status: "error", message: "Wallet Already Initialized"});
     }
 
-    await walletRepository.create({customerId})
+    await walletRepository.create(customerId);
     res.status(201).json({status: "success", message: "Wallet Successfully Initialized"});
 });
 
