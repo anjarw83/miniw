@@ -11,8 +11,7 @@ const verifyToken = (req, res, next) => {
     }
     try {
         const value = token.split(" ")[1];
-        const decoded = jwt.verify(value, config.TOKEN_KEY);
-        req.user = decoded;
+        req.user = jwt.verify(value, config.TOKEN_KEY);
     } catch (err) {
         return res.status(401).json("Invalid Token");
     }
@@ -38,20 +37,4 @@ const decodeToken = (req, res) => {
 module.exports = {
     verifyToken,
     decodeToken
-    // // if user is authenticated the redirected to next page else redirect to login page
-    // ensureAuth: function(req, res, next) {
-    //     if (req.isAuthenticated()) {
-    //         return next();
-    //     } else {
-    //         res.redirect("/");
-    //     }
-    // },
-    // // if user is authenticated and going to login page then redirected to home page if not authenticated redirected to login page  .
-    // ensureGuest: function(req, res, next) {
-    //     if (!req.isAuthenticated()) {
-    //         return next();
-    //     } else {
-    //         res.redirect("/hello");
-    //     }
-    // }
 };

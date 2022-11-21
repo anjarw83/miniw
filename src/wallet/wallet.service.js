@@ -7,17 +7,17 @@ const deposits = async({xid, amount, reference_id },res) => {
         customerId: xid, enabled: true
     })
     if( !wallet) {
-        return res.status(404).json({status: "error", message: "Invalid Wallet Balance"});
+        return {status: "error", message: "Invalid Wallet"};
     }
-    const mutation = await Mutation.findOne({customerId: xid, referenceId: reference_id});
+    let mutation = await Mutation.findOne({customerId: xid, referenceId: reference_id});
     if ( mutation ){
-        return res.status(400).json({status: "error", message: "Reference Id already exist"});
+        return {status: "error", message: "Reference Id already exist"};
     }
     const result = await Wallet.findOneAndUpdate({customerId: xid}, {
         $inc: { balance: amount }
     }, {returnOriginal: false});
-    await Mutation.create({customerId: xid, amount: amount, referenceId: reference_id});
-    return result;
+    mutation = await Mutation.create({customerId: xid, amount: amount, referenceId: reference_id});
+    return { customerId: mutation.customerId, depositId: mutation._id, depositedAt: mutation.createdAt, status: "success", referenceId: reference_id } ;
 }
 
 const withdrawals = async ({xid, amount, reference_id }, res) => {
@@ -25,18 +25,18 @@ const withdrawals = async ({xid, amount, reference_id }, res) => {
         customerId: xid, enabled: true
     })
     if( !wallet) {
-        return res.status(404).json({status: "error", message: "Invalid Wallet Balance"});
+        return {status: "error", message: "Invalid Wallet Balance"};
     }
-    const mutation = await Mutation.findOne({customerId: xid, referenceId: reference_id});
+    let mutation = await Mutation.findOne({customerId: xid, referenceId: reference_id});
     if ( mutation ){
-        return res.status(400).json({status: "error", message: "Reference Id already exist"});
+        return {status: "error", message: "Reference Id already exist"};
     }
     const result = await Wallet.findOneAndUpdate({customerId: xid}, {
         $inc: { balance: -amount }
     }, {returnOriginal: false});
-    await Mutation.create({customerId: xid, amount: amount, referenceId: reference_id});
+    mutation = await Mutation.create({customerId: xid, amount: amount, referenceId: reference_id});
 
-    return result;
+    return { customerId: mutation.customerId, withdrawalId: mutation._id, withdrawnAt: mutation.createdAt, status: "success", referenceId: reference_id };
 }
 
 module.exports = {

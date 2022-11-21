@@ -51,6 +51,11 @@ describe('wallet.service', () => {
                 enabled: true,
                 createdAt: Date.now(),
             }
+            const mutationData = {
+                customerId: params.xid,
+                depositId: 'abcdh12345',
+                depositedAt: Date.now()
+            }
 
             await crateInitialData([initData]);
 
@@ -62,14 +67,15 @@ describe('wallet.service', () => {
             mockWallet = jest.spyOn(Wallet, 'findOneAndUpdate');
             mockWallet.mockResolvedValueOnce(sumData);
             mockMutation = jest.spyOn(Mutation, 'create');
-            mockMutation.mockResolvedValueOnce(null);
+            mockMutation.mockResolvedValueOnce(mutationData);
 
             // When
             const result = await walletService.deposits(params, null);
 
 
             // Then
-            expect(result.balance).toBe(100000);
+            expect(result.status).toEqual("success");
+            expect(result.referenceId).toEqual(params.reference_id);
 
         });
     })
@@ -95,6 +101,11 @@ describe('wallet.service', () => {
                 enabled: true,
                 createdAt: Date.now(),
             }
+            const mutationData = {
+                customerId: params.xid,
+                depositId: 'abcdh12345',
+                depositedAt: Date.now()
+            }
 
             await crateInitialData([initData]);
 
@@ -106,14 +117,15 @@ describe('wallet.service', () => {
             mockWallet = jest.spyOn(Wallet, 'findOneAndUpdate');
             mockWallet.mockResolvedValueOnce(updatedData);
             mockMutation = jest.spyOn(Mutation, 'create');
-            mockMutation.mockResolvedValueOnce(null);
+            mockMutation.mockResolvedValueOnce(mutationData);
 
             // When
             const result = await walletService.deposits(params, null);
 
 
             // Then
-            expect(result.balance).toBe(200000);
+            expect(result.status).toEqual("success");
+            expect(result.referenceId).toEqual(params.reference_id);
         });
     });
 

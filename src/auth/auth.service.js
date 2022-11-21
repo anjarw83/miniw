@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs")
 const Customer = require("../customer/customer.model");
+const {HttpResponse} = require("../helpers/helper");
 const config = process.env;
 
 
@@ -31,10 +32,9 @@ const register = async (req, res, next) => {
 
     // check if user already exist
     const oldUser = await Customer.findOne({email: email});
-    console.log(email, oldUser);
 
     if (oldUser) {
-        return res.status(409).json({status: "error", message:"User Already Exist. Please Login"})
+        return { status: "error", message: "User already exist" };
     }
 
     //Encrypt user password
@@ -67,22 +67,6 @@ const register = async (req, res, next) => {
 
     return { xid: customer._id, token: customer.token };
 }
-
-// const verifyToken = (req, res, next) => {
-//     const token =
-//         req.body.token || req.query.token || req.headers["x-access-token"];
-//
-//     if (!token) {
-//         return res.status(403).send("A token is required for authentication");
-//     }
-//     try {
-//         const decoded = jwt.verify(token, config.TOKEN_KEY);
-//         req.user = decoded;
-//     } catch (err) {
-//         return res.status(401).send("Invalid Token");
-//     }
-//     return next();
-// };
 
 authService = {
     register,

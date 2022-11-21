@@ -25,6 +25,15 @@ router.post("/v1/signin", jsonParser, async (req, res) => {
     res.status(200).json({status: "success", data: result});
 });
 
+router.post("/v1/register", jsonParser, async (req, res) =>{
+
+    const result = await authService.register(req, res);
+    if (result.status === "error") {
+        return res.status(409).json({status: result.status, message: result.message});
+    }
+    res.status(200).json({status: "success", data: result })
+});
+
 
 
 module.exports = router;

@@ -7,6 +7,6 @@ const defaultPath = '/api';
 
 router.use(`${defaultPath}/`, indexRouter);
 
-router.use(`${defaultPath}/v1`, walletRouter);
+router.use(`${defaultPath}/v1/wallet`, walletRouter);
 
 module.exports = router
